@@ -125,6 +125,12 @@ class GUI():
 		self.remove_whitelist_button = tk.Button(self.functions_panel, width=20, height=3, text="Remove from Whitelist",
 								command=lambda : self.move_to_list(self.faces_known, "k"))
 		self.remove_whitelist_button.pack(side="top", pady=(5,5))
+
+		self.remove_whitelist_button = tk.Button(self.functions_panel, width=20, height=3, text="Delete Image",
+								command=lambda : self.delete_image())
+		self.remove_whitelist_button.pack(side="bottom", pady=(5,5))
+		
+		self.select_list(self.faces_whitelist, "w", "Whitelist")
 	
 	def get_images(self, reset=False):
 		if(reset):
@@ -218,7 +224,8 @@ class GUI():
 	def rename_image(self, name):
 		#self.update_canvas()
 		if(len(self.image_list) > 0):
-			if(name.strip() != "" and name.isalnum()):
+			spot_name = name.replace("_", "")
+			if(name.strip() != "" and spot_name.isalnum()):
 				curr_name = self.image_list[self.image_index].get_face()
 				if self.list_type == "u":
 					new_name = self.image_list[self.image_index].get_face().split('/')[-1]
@@ -263,6 +270,15 @@ class GUI():
 			gone = self.image_list.pop(self.image_index)
 			#self.return_list().remove(self.image_index)
 			os.rename(curr_name, '.'.join(new_name))
+			
+			if(len(self.image_list) > 0):
+				if(self.image_index == 0):
+					image_index = len(self.image_list) - 1
+					self.update_canvas(self.image_list[image_index])
+				else:
+					self.update_canvas(self.image_list[self.image_index-1])
+			else:
+				self.update_canvas()
 		else:
 			pass
 
@@ -291,5 +307,6 @@ class GUI():
 
 if __name__ == "__main__":
 	win = tk.Tk()
+	win.title("Sentinel Manager")
 	gui = GUI(win)
 	win.mainloop()
